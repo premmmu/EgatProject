@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simple Clickable Box (Thai only)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Mitr&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Mitr', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #ffffff;
+      color: #004c99;
+      text-align: center;
+    }
+    header {
+      background-color: #ffffff;
+      color: #0066cc;
+      padding: 20px;
+    }
+    .logo-center {
+      width: 150px;
+      display: block;
+      margin: 0 auto 10px auto;
+    }
+    .subtitle {
+      font-size: 40px;
+      color: #004c99;
+      margin-top: 10px;
+    }
+    nav {
+      background-color: #004c99;
+      padding: 10px;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 20px;
+      font-weight: bold;
+    }
+    main {
+      padding: 40px;
+      position: relative;
+    }
+    form {
+      background-color: #fbd02a;
+      padding: 30px;
+      border-radius: 10px;
+      display: inline-block;
+      text-align: left;
+      color: #0066cc;
+      max-width: 450px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .form-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 18px;
+      gap: 10px;
+      flex-wrap: nowrap;
+    }
+    .form-row label {
+      flex: 0 0 110px;
+      font-weight: bold;
+      font-size: 16px;
+      white-space: nowrap;
+    }
+    .form-row input[type="number"],
+    .form-row select {
+      flex: 1 1 auto;
+      padding: 8px 10px;
+      font-size: 16px;
+      border: 2px solid #0066cc;
+      border-radius: 6px;
+      box-sizing: border-box;
+      min-width: 0;
+    }
+    .unit {
+      flex: 0 0 40px;
+      font-size: 16px;
+      color: #004c99;
+      text-align: left;
+      white-space: nowrap;
+    }
+    button {
+      background-color: #004c99;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    button:hover {
+      background-color: #003366;
+    }
+    footer {
+      background-color: #003366;
+      color: white;
+      padding: 15px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .inputs {
+      display: flex;
+      gap: 10px;
+      flex: 1;
+      min-width: 0;
+    }
+    .inputs > div {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      min-width: 0;
+    }
+    .inputs input[type="number"] {
+      flex: 1;
+      min-width: 0;
+      padding: 8px 10px;
+      font-size: 16px;
+      border: 2px solid #0066cc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    .form-row .inputs .unit {
+      flex: 0 0 40px;
+      margin-left: 8px;
+      white-space: nowrap;
+      color: #004c99;
+      text-align: left;
+    }
+    .label-tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: help;
+    }
+    .label-tooltip .tooltiptext {
+  min-width: 120px;
+  max-width: 320px; 
+  padding: 10px 15px;
+  background-color: #004c99;
+  color: #fff;
+  border-radius: 6px;
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s;
+  font-size: 14px;
+  white-space: normal;
+  line-height: 1.4;
+  box-sizing: border-box;
+  word-wrap: break-word;  /* แบ่งคำยาว ๆ */
+}
+
+    .label-tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+    #resultSection {
+      display: none;
+      padding: 30px;
+      background-color: #fff9e6;
+      border-radius: 12px;
+      margin-top: 30px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #resultSection h2 {
+      color: #cc6600;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    #resultTable {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 16px;
+      background-color: #fffdf5;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    }
+    #resultTable th,
+    #resultTable td {
+      padding: 12px 16px;
+      text-align: center;
+    }
+    #resultTable thead tr {
+      background-color: #fff6e0;
+      color: #333333;
+    }
+    #resultTable tbody tr:nth-child(even) {
+      background-color: #ffffff;
+    }
+    #resultTable tbody tr:nth-child(odd) {
+      background-color: #ffffff;
+    }
+    #resultTable td {
+      color: #333;  
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="egat-logo.png" alt="โลโก้ กฟผ." class="logo-center" />
+  <div class="subtitle">แผนกระบบขนส่งวัสดุและบริการ (หวขบ.-ช.)</div>
+</header>
+
+<nav>
+  <a href="#">หน้าแรก</a>
+  <a href="#">เกี่ยวกับ</a>
+  <a href="#">ติดต่อ</a>
+  <a href="#">บริการ</a>
+</nav>
+
+<p style="font-size: 36px; color: #004c99; margin-top: 20px;">
+  Calculation of Drive Power
+</p>
+
+<div id="resultSection" style="display: none; padding: 20px;">
+  <h2 style="color:#004c99;">ผลลัพธ์ที่คำนวณได้</h2>
+  <table id="resultTable" border="1" cellpadding="10" style="margin: 0 auto; color: #004c99; font-size: 16px; border-collapse: collapse;">
+    <thead>
+      <tr style="background-color: #fbd02a;">
+        <th>รายการ</th>
+        <th>ค่า</th>
+        <th>หน่วย</th>
+      </tr>
+    </thead>
+    <tbody id="resultBody"></tbody>
+  </table>
+</div>
+
+<main>
+  <form id="simpleForm">
+    <p style="font-size: 24px; color: #0066cc; margin-bottom: 25px;">Belt width</p>
+
+    <div class="form-row">
+      <div class="label-tooltip">
+        <label for="lenght">L :</label>
+        <span class="tooltiptext">ความยาวสายพาน </span>
+      </div>
+      <input type="number" id="lenght" name="lenght" step="0.01" />
+      <span class="unit">m.</span>
+    </div>
+
+    <div class="form-row">
+      <div class="label-tooltip">
+        <label for="head">Head :</label>
+        <span class="tooltiptext">ระดับความสูงด้านหัว </span>
+      </div>
+      <input type="number" id="head" name="head" step="0.01"/>
+      <span class="unit">mls.</span>
+    </div>
+
+    <div class="form-row">
+      <div class="label-tooltip">
+        <label for="tail">Tail :</label>
+        <span class="tooltiptext">ระดับความสูงด้านท้าย </span>
+      </div>
+      <input type="number" id="tail" name="tail" step="0.01"/>
+      <span class="unit">mls.</span>
+    </div>
+
+    <div class="form-row">
+      <div class="label-tooltip">
+        <label for="Ho">Ho :</label>
+        <span class="tooltiptext">ความสูงของ slope</span>
+      </div>
+      <input type="number" id="Ho" name="Ho" step="0.01" readonly/>
+      <span class="unit">m.</span>
+    </div>
+
+    <div class="form-row">
+      <label for="headlineSelect">หัวสายพาน:</label>
+      <select id="headlineSelect" name="headlineSelect" style="max-width: 150px;">
+        <option value="">-- เลือกหัวสายพาน --</option>
+        <option value="2">Shutting head</option>
+        <option value="5">Bontoon head</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label for="headline">ค่าหัวสายพาน:</label>
+      <input type="number" id="headline" name="headline" step="0.01"/>
+      <span class="unit">m.</span>
+    </div>
+
+    <div class="form-row">
+      <div class="label-tooltip">
+        <label for="H1">H1 :</label>
+        <span class="tooltiptext">ความสูงของ slope + ความสูงของสายพาน</span>
+      </div>
+      <input type="number" id="H1" name="H1" step="0.01" readonly/>
+      <span class="unit">m.</span>
+    </div>
+
+    <div class="form-row">
+      <div class="label-tooltip">
+        <label for="Qinput">Q :</label>
+        <span class="tooltiptext">carring capacity</span>
+      </div>
+      <div class="inputs">
+        <div>
+          <input type="number" id="Qinput" name="Qinput" step="0.01"/>
+          <span class="unit">t/h</span>
+        </div>
+        <div>
+          <input type="number" id="Qcalculated" name="Qcalculated" step="0.01" readonly/>
+          <span class="unit">t/h</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="label-tooltip">
+        <label for="beltwidth">Belt Width :</label>
+        <span class="tooltiptext">ความกว้างของสายพาน</span>
+      </div>
+      <input type="number" id="beltwidth" name="beltwidth" step="0.01"/>
+      <span class="unit">mm.</span>
+    </div>
+
+    <div class="form-row">
+      <div class="label-tooltip">
+        <label for="weight">Weight :</label>
+        <span class="tooltiptext">น้ำหนักของสายพานขณะเคลื่อนที่โดยไม่มีการขนส่งวัสดุ</span>
+      </div>
+      <input type="number" id="weight" name="weight" step="0.01"/>
+      <span class="unit">kg/m.</span>
+    </div>
+
+    <button type="submit">ส่งข้อมูล</button>
+  </form>
+</main>
+
+<footer>
+  &copy; 2025 เว็บไซต์ของฉัน
+</footer>
+
+<script>
+const form = document.getElementById('simpleForm');
+const lenghtInput = document.getElementById('lenght');
+const headInput = document.getElementById('head');
+const tailInput = document.getElementById('tail');
+const hoInput = document.getElementById('Ho');
+const headlineInput = document.getElementById('headline');
+const headlineSelect = document.getElementById('headlineSelect');
+const h1Input = document.getElementById('H1');
+const qInput = document.getElementById('Qinput');
+const qCalculated = document.getElementById('Qcalculated');
+const beltwidthInput = document.getElementById('beltwidth');
+const weightInput = document.getElementById('weight');
+const numericInputs = document.querySelectorAll('input[type="number"]');
+const V = 217.2;
+const f = 0.023;
+const Lo = 66.0;
+const SL = 4.50;
+const mechanicalEfficiency = 1.07;
+
+numericInputs.forEach(input => {
+  input.addEventListener('blur', () => {
+    const value = parseFloat(input.value);
+    if (!isNaN(value)) {
+      input.value = value.toFixed(2);
+    }
+  });
+});
+
+function calculateHo() {
+  const head = parseFloat(headInput.value);
+  const tail = parseFloat(tailInput.value);
+  if (!isNaN(head) && !isNaN(tail)) {
+    hoInput.value = (head - tail).toFixed(2);
+    calculateH1();
+  } else {
+    hoInput.value = '';
+    h1Input.value = '';
+  }
+}
+
+function calculateH1() {
+  const ho = parseFloat(hoInput.value);
+  const headline = parseFloat(headlineInput.value);
+  if (!isNaN(ho) && !isNaN(headline)) {
+    h1Input.value = (ho + headline).toFixed(2);
+  } else {
+    h1Input.value = '';
+  }
+}
+
+headlineSelect.addEventListener('change', function () {
+  const selectedValue = parseFloat(this.value);
+  if (!isNaN(selectedValue)) {
+    headlineInput.value = selectedValue.toFixed(2);
+    calculateH1();
+  }
+});
+
+qInput.addEventListener('input', function () {
+  const q = parseFloat(qInput.value);
+  if (!isNaN(q)) {
+    qCalculated.value = (q * 1.15).toFixed(2);
+  } else {
+    qCalculated.value = '';
+  }
+});
+
+headInput.addEventListener('input', calculateHo);
+tailInput.addEventListener('input', calculateHo);
+headlineInput.addEventListener('input', calculateH1);
+
+form.addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const focusable = Array.from(form.querySelectorAll('input, select'));
+    const index = focusable.indexOf(document.activeElement);
+    if (index > -1 && index < focusable.length - 1) {
+      focusable[index + 1].focus();
+    }
+  }
+});
+
+form.addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  const L = parseFloat(lenghtInput.value);
+  const Q = parseFloat(qCalculated.value);
+  const H1 = parseFloat(h1Input.value);
+  const W = parseFloat(weightInput.value);
+
+  if ([L, Q, H1, W].some(val => isNaN(val))) {
+    alert("กรุณากรอกข้อมูลให้ครบ");
+    return;
+  }
+
+  const P1 = parseFloat((0.06 * V * W * (L + Lo) * f / 367).toFixed(2));
+  const P2 = parseFloat((Q * f * (L + Lo) / 367).toFixed(2));
+  const P3 = parseFloat((H1 * Q / 367).toFixed(2));
+  const P4 = parseFloat((0.0008 * V * SL).toFixed(2));
+  const P = parseFloat((P1 + P2 + P3 + P4).toFixed(2));
+  const Pm = parseFloat((P * mechanicalEfficiency).toFixed(2));
+  const Pm12 = parseFloat((Pm * 1.20).toFixed(2));
+  const Pm15 = parseFloat((Pm * 1.50).toFixed(2));
+
+  const resultBody = document.getElementById('resultBody');
+  const resultSection = document.getElementById('resultSection');
+  resultBody.innerHTML = '';
+
+  const rows = [
+    { label: 'L', value: L, unit: 'm.', tooltip: 'ความยาวสายพาน' },
+    { label: 'Head', value: headInput.value, unit: 'mls.' , tooltip: 'ระดับความสูงด้านหัว' },
+    { label: 'Tail', value: tailInput.value, unit: 'mls.' , tooltip: 'ระดับความสูงด้านท้าย' },
+    { label: 'Ho', value: hoInput.value, unit: 'm.' , tooltip: 'ความสูงของ slope' },
+    { label: 'หัวสายพาน', value: headlineInput.value, unit: 'm.' , tooltip: 'ค่าหัวสายพาน' },
+    { label: 'H1', value: H1, unit: 'm.' , tooltip: 'ความสูงของ slope + ความสูงของสายพาน' },
+    { label: 'Q', value: Q, unit: 't/h' , tooltip: 'carring capacity' },
+    { label: 'Belt Width', value: beltwidthInput.value, unit: 'mm.' , tooltip: 'ความกว้างของสายพาน' },
+    { label: 'Weight', value: W, unit: 'kg/m.' , tooltip: 'น้ำหนักของสายพานขณะเคลื่อนที่โดยไม่มีการขนส่งวัสดุ' },
+    { label: 'P1', value: P1, unit: 'kW' , tooltip: 'กำลังในการเคลื่อนย้ายสายพานเปล่า' },
+    { label: 'P2', value: P2, unit: 'kW' , tooltip: 'กำลังในการเคลื่อนย้ายสายพานที่มีการขนวัสดุ' },
+    { label: 'P3', value: P3, unit: 'kW' , tooltip: 'กำลังในการเคลื่อนย้ายสายพานตามแนวดิ่ง'},
+    { label: 'P4', value: P4, unit: 'kW' , tooltip: 'กำลังที่ต้องการสำหรับการผ่านความสูญเสียจากแรงเสียดทานของ skirtboards' },
+    { label: 'P', value: P, unit: 'kW' , tooltip: 'กำลังทั้งหมดที่ต้องการ' },
+    { label: 'Pm', value: Pm, unit: 'kW' , tooltip: 'กำลัง motor' },
+    { label: '1.20 x Pm', value: Pm12, unit: 'kW' , tooltip: 'กำลัง motor ที่คำนึงถึง safety factor 20%' },
+    { label: '1.50 x Pm', value: Pm15, unit: 'kW' , tooltip: 'กำลัง motor ที่คำนึงถึง safety factor 50%' }
+  ];
+
+  rows.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>
+        <span class="label-tooltip">${row.label}
+          <span class="tooltiptext">${row.tooltip || ''}</span>
+        </span>
+      </td>
+      <td>${row.value}</td>
+      <td>${row.unit}</td>
+    `;
+    resultBody.appendChild(tr);
+  });
+
+  resultSection.style.display = 'block';
+  resultSection.scrollIntoView({ behavior: 'smooth' });
+});
+
+// ปรับตำแหน่ง tooltip ให้ไม่ล้นขอบ
+document.querySelectorAll('.label-tooltip').forEach(label => {
+  label.addEventListener('mousemove', e => {
+    const tooltip = label.querySelector('.tooltiptext');
+    if (!tooltip) return;
+
+    const rect = tooltip.getBoundingClientRect();
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+
+    // ตรวจสอบถ้า tooltip ล้นขอบขวา
+    if (rect.right > viewportWidth) {
+      tooltip.style.left = 'auto';
+      tooltip.style.right = '0';
+      tooltip.style.transform = 'translateX(0)';
+    } else if (rect.left < 0) {
+      // ล้นขอบซ้าย
+      tooltip.style.left = '0';
+      tooltip.style.right = 'auto';
+      tooltip.style.transform = 'translateX(0)';
+    } else {
+      tooltip.style.left = '50%';
+      tooltip.style.right = 'auto';
+      tooltip.style.transform = 'translateX(-50%)';
+    }
+  });
+});
+</script>
+
+</body>
+</html>
