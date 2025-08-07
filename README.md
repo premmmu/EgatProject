@@ -1,2 +1,1 @@
-# EgatProject
-for project internship
+
